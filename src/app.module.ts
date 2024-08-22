@@ -1,27 +1,30 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppService } from './app.service';
+import { AppController } from './app.controller';
 import { AutobotModule } from './autobot/autobot.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { AutobotService } from './autobot/autobot.service';
+import { PrismaService } from './prisma.service';
+import { AutobotSchedulerService } from './autobot-scheduler/autobot-scheduler.service';
 
 @Module({
   imports: [
     ThrottlerModule.forRoot([
       {
-        ttl: 60,
+        ttl: 60000,
         limit: 5,
       },
     ]),
+    ScheduleModule.forRoot(),
     AutobotModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    AutobotService,
+    PrismaService,
+    AutobotSchedulerService,
   ],
 })
 export class AppModule {}
