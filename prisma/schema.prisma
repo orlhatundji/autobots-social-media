@@ -1,0 +1,33 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Autobot {
+  id        Int       @id @default(autoincrement())
+  name      String
+  posts     Post[]
+  createdAt DateTime  @default(now())
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  title     String    @unique
+  content   String
+  autbotId  Int
+  autbot    Autobot   @relation(fields: [autbotId], references: [id])
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  content   String
+  postId    Int
+  post      Post      @relation(fields: [postId], references: [id])
+  createdAt DateTime  @default(now())
+}
