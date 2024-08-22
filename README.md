@@ -13,9 +13,6 @@ It uses Prisma for database interactions and Swagger for API documentation.
 - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
 - [Project Structure](#project-structure)
-- [Endpoints](#endpoints)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Frameworks
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
@@ -27,8 +24,9 @@ To get started with the Autobots Social Media Project, clone the repository and 
 To get started with the Autobots Social Media Project, clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/yourusername/autobots-social-media.git
+git clone git@github.com:orlhatundji/autobots-social-media.git
 cd autobots-social-media
+```
 
 ```bash
 $ yarn install
