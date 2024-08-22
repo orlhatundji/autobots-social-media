@@ -9,8 +9,8 @@ export class AutobotSchedulerService {
 
   @Cron(CronExpression.EVERY_HOUR)
   async handleCron() {
-    this.logger.debug('Called every hour');
-    for (let i = 0; i < 2; i++) {
+    this.logger.debug('Creating 500 Autobots...');
+    for (let i = 0; i < 500; i++) {
       const autobot = `Autobot-${Date.now()}-${i}`;
       await this.autobotService.createAutobot(autobot);
     }
