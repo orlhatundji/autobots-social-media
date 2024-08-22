@@ -7,6 +7,7 @@ import { AutobotModule } from './autobot/autobot.module';
 import { AutobotService } from './autobot/autobot.service';
 import { PrismaService } from './prisma.service';
 import { AutobotSchedulerService } from './autobot-scheduler/autobot-scheduler.service';
+import { AutobotGateway } from './autobot/autobot.gateway';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AutobotSchedulerService } from './autobot-scheduler/autobot-scheduler.s
     AutobotService,
     PrismaService,
     AutobotSchedulerService,
+    AutobotGateway,
   ],
 })
 export class AppModule {}

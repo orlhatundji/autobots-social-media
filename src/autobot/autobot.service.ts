@@ -1,16 +1,21 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import axios from 'axios';
+import { AutobotGateway } from './autobot.gateway';
 
 @Injectable()
 export class AutobotService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private autobotGateway: AutobotGateway,
+  ) {}
 
   private readonly CONTENTMAX = 190;
   private readonly TAKE = 10;
   private readonly logger = new Logger(AutobotService.name);
 
   async createAutobot(name: string): Promise<any> {
+    let autobot;
     try {
       const postsResponse = await axios.get(
         'https://jsonplaceholder.typicode.com/posts?_limit=2',
@@ -55,7 +60,7 @@ export class AutobotService {
         }),
       );
 
-      return this.prismaService.autobot.create({
+      autobot = this.prismaService.autobot.create({
         data: {
           name: name,
           posts: {
@@ -67,6 +72,9 @@ export class AutobotService {
       console.error('Error creating Autobot:', error);
       throw new Error('Failed to create Autobot');
     }
+
+    this.autobotGateway.notifyAutobotCreation();
+    return autobot;
   }
 
   async getAutobots(limit: number, skip: number): Promise<any> {
@@ -74,6 +82,10 @@ export class AutobotService {
       take: limit,
       skip: skip,
     });
+  }
+
+  async getAutobotsCount(): Promise<any> {
+    return this.prismaService.autobot.count();
   }
 
   async getAutobot(autbotId: number): Promise<any> {

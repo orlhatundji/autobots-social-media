@@ -4,6 +4,7 @@ import { AutobotController } from './autobot.controller';
 import { PrismaService } from 'src/prisma.service';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { AutobotGateway } from './autobot.gateway';
 
 @Module({
   controllers: [AutobotController],
@@ -14,6 +15,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    AutobotGateway,
   ],
 })
 export class AutobotModule {}

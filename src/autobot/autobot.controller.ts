@@ -21,6 +21,11 @@ export class AutobotController {
     return this.autobotService.getAutobots(this.LIMIT, skip);
   }
 
+  @Get('count')
+  getCount() {
+    return this.autobotService.getAutobotsCount();
+  }
+
   @ApiOperation({ summary: 'Get details of a specific Autobot' })
   @ApiParam({ name: 'autbotId', description: 'ID of the Autobot', example: 1 })
   @Get(':autbotId')
