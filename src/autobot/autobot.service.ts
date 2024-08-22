@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import axios from 'axios';
 
 @Injectable()
 export class AutobotService {
   constructor(private prismaService: PrismaService) {}
-  contentMax = 190;
+
+  private readonly CONTENTMAX = 190;
+  private readonly TAKE = 10;
+  private readonly logger = new Logger(AutobotService.name);
 
   async createAutobot(name: string): Promise<any> {
     try {
@@ -34,16 +37,16 @@ export class AutobotService {
           );
           const comments = commentsResponse.data.map((comment) => ({
             content:
-              comment.body.length > this.contentMax
-                ? comment.body.substring(0, this.contentMax)
+              comment.body.length > this.CONTENTMAX
+                ? comment.body.substring(0, this.CONTENTMAX)
                 : comment.body,
           }));
 
           return {
             title: uniqueTitle,
             content:
-              post.body.length > this.contentMax
-                ? post.body.substring(0, this.contentMax)
+              post.body.length > this.CONTENTMAX
+                ? post.body.substring(0, this.CONTENTMAX)
                 : post.body,
             comments: {
               create: comments,
@@ -70,13 +73,47 @@ export class AutobotService {
     return this.prismaService.autobot.findMany({
       take: limit,
       skip: skip,
-      include: {
-        posts: {
-          include: {
-            comments: true,
-          },
-        },
-      },
     });
+  }
+
+  async getAutobot(autbotId: number): Promise<any> {
+    try {
+      const bot = await this.prismaService.autobot.findUnique({
+        where: { id: autbotId },
+      });
+      if (!bot) return new HttpException('Autobot not found', 404);
+      return bot;
+    } catch (error) {
+      this.logger.error('Error getting Autobot:', error);
+      return new HttpException('Oops, Something went wrong', 500);
+    }
+  }
+
+  async getAutobotPosts(autbotId: number): Promise<any> {
+    try {
+      const posts = await this.prismaService.post.findMany({
+        where: { autbotId },
+        take: this.TAKE,
+      });
+      return posts;
+    } catch (error) {
+      this.logger.error('Error getting Autobot posts:', error);
+      return new HttpException('Oops, Something went wrong', 500);
+    }
+  }
+
+  async getAutobotPostComments(postId: number): Promise<any> {
+    try {
+      const comments = await this.prismaService.comment.findMany({
+        where: { postId },
+        take: this.TAKE,
+      });
+      if (!comments)
+        return new HttpException('Comments not found for this post', 404);
+      return comments;
+    } catch (error) {
+      this.logger.error('Error getting Autobot post comments:', error);
+      return new HttpException('Oops, Something went wrong', 500);
+    }
   }
 }
